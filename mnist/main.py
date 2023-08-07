@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch import mps
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
@@ -86,8 +85,6 @@ def main():
                         help='Learning rate step gamma (default: 0.7)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
-    parser.add_argument('--no-mps', action='store_true', default=False,
-                        help='disables macOS GPU training')
     parser.add_argument('--dry-run', action='store_true', default=False,
                         help='quickly check a single pass')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -98,14 +95,11 @@ def main():
                         help='For Saving the current Model')
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
-    use_mps = not args.no_mps and torch.mps.is_available()
 
     torch.manual_seed(args.seed)
 
     if use_cuda:
         device = torch.device("cuda")
-    elif use_mps:
-        device = torch.device("mps")
     else:
         device = torch.device("cpu")
 
